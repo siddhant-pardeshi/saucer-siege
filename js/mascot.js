@@ -246,6 +246,38 @@
 @keyframes mTalk{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.35)}}
 .talking #m-mouth{animation:mTalk .24s ease-in-out infinite}
 
+/* ---- bold states ---- */
+@keyframes mDanceBody{0%,100%{transform:translateY(0) rotate(0deg)}25%{transform:translateY(-6px) rotate(-3.5deg)}50%{transform:translateY(0) rotate(0deg)}75%{transform:translateY(-6px) rotate(3.5deg)}}
+@keyframes mDanceArmL{0%,100%{transform:rotate(24deg)}50%{transform:rotate(152deg)}}
+@keyframes mDanceArmR{0%,100%{transform:rotate(-24deg)}50%{transform:rotate(-152deg)}}
+@keyframes mDanceTail{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(14deg)}}
+.st-dance #m-body{animation:mDanceBody .52s ease-in-out infinite}
+.st-dance #m-armL{animation:mDanceArmL .52s ease-in-out infinite}
+.st-dance #m-armR{animation:mDanceArmR .52s ease-in-out infinite}
+.st-dance #m-tail{animation:mDanceTail .52s ease-in-out infinite}
+.st-dance #m-earL{animation:mEarT 2.2s ease-in-out infinite}
+.st-dance #m-earR{animation:mEarT2 2.6s ease-in-out infinite}
+.st-dance #m-mouth-path{d:path('M100 124 Q110 134 120 124');stroke-width:4}
+
+@keyframes mDizzyHead{0%,100%{transform:rotate(-7deg)}25%{transform:rotate(6deg) translateX(2px)}50%{transform:rotate(-4deg)}75%{transform:rotate(7deg) translateX(-2px)}}
+.st-dizzy #m-head{animation:mDizzyHead 1.15s ease-in-out infinite}
+.st-dizzy #m-tail{animation:mTail 2.4s ease-in-out infinite}
+.st-dizzy #m-mouth-path{d:path('M104 128 Q110 125 116 128')}
+.st-dizzy #m-browL{transform:translateY(2px) rotate(-8deg)}
+.st-dizzy #m-browR{transform:translateY(2px) rotate(8deg)}
+
+@keyframes mGaspBody{0%{transform:scale(1)}30%{transform:scale(1.07) translateY(-4px)}60%{transform:scale(1.02)}100%{transform:scale(1)}}
+.st-gasp #m-body{animation:mGaspBody .7s ease-out}
+.st-gasp #m-mouth-path{d:path('M106 123 Q110 117 114 123 Q110 131 106 123')}
+.st-gasp #m-eyeL ellipse:first-child,.st-gasp #m-eyeR ellipse:first-child{transform:scale(1.16)}
+
+@keyframes mBounceUp{0%,100%{transform:translateY(0) scaleY(1)}30%{transform:translateY(1px) scaleY(.94)}55%{transform:translateY(-9px) scaleY(1.06)}80%{transform:translateY(0) scaleY(.98)}}
+.st-bounce #m-body{animation:mBounceUp .6s cubic-bezier(.34,1.56,.64,1) 2}
+
+/* the star charm quietly twinkles whenever she idles */
+@keyframes mCharmTwinkle{0%,86%,100%{transform:scale(1) rotate(0deg)}90%{transform:scale(1.4) rotate(16deg)}95%{transform:scale(1.12) rotate(-8deg)}}
+.st-idle #m-charm,.st-bounce #m-charm{animation:mCharmTwinkle 4.4s ease-in-out infinite;transform-origin:center}
+
 /* enter / hide */
 @keyframes mEnter{0%{transform:translateY(46px) scale(.85);opacity:0}
  60%{transform:translateY(-7px) scale(1.03);opacity:1}100%{transform:translateY(0) scale(1);opacity:1}}
@@ -287,6 +319,10 @@
   const ONESHOT = {
     wave: { ms: 1800, return: 'mWaveReturn', retEl: '#m-armR' },
     cheer: { ms: 1200 },
+    dance: { ms: 2600 },
+    dizzy: { ms: 1700 },
+    gasp: { ms: 800 },
+    bounce: { ms: 1300 },
     alert: { ms: 850 },
     point: { ms: 1000 },
     think: { ms: 2600 },
@@ -296,7 +332,7 @@
     idle: { ms: 0 },
     hide: { ms: 400 }
   };
-  const PRIORITY = { sleep: 6, cheer: 5, alert: 4, wave: 3, point: 3, think: 2, sad: 3, enter: 5, idle: 0, hide: 7 };
+  const PRIORITY = { sleep: 6, cheer: 5, dance: 5, alert: 4, dizzy: 4, gasp: 3, wave: 3, point: 3, bounce: 2, think: 2, sad: 3, enter: 5, idle: 0, hide: 7 };
 
   const S = {
     el: null, root: null, bubble: null, state: 'idle', until: 0,
@@ -317,10 +353,10 @@
     return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
 
+  const clampN = (v, a, b) => Math.max(a, Math.min(b, v));
+
   function setEyeLook(x, y) {
-    const dx = Math.max(-2.4, Math.min(2.4, x)), dy = Math.max(-1.6, Math.min(2.4, y));
-    const head = S.root.querySelector('#m-head');
-    if (head) head.style.setProperty('--lx', dx + 'px');
+    const dx = clampN(x, -2.4, 2.4), dy = clampN(y, -1.6, 2.4);
     [S.root.querySelector('#m-eyeL'), S.root.querySelector('#m-eyeR')].forEach(g => {
       if (!g) return;
       g.querySelectorAll('ellipse,circle').forEach(e => {
@@ -328,6 +364,19 @@
         e.style.translate = `${dx}px ${dy}px`;
       });
     });
+    /* head leans toward the cursor (idle only — keyframed states own their transforms) */
+    if (S.state === 'idle' && !S.dragging) {
+      const head = S.root.querySelector('#m-head');
+      if (head) {
+        head.style.transition = 'transform .3s ease';
+        head.style.transform = `rotate(${dx * 2.2}deg) translate(${dx * 1.6}px, ${Math.abs(dy) * .6}px)`;
+      }
+      /* and the whole character drifts a little that way */
+      if (S.stage) {
+        S.stage.style.transition = 'transform .34s ease';
+        S.stage.style.transform = `translateX(${dx * 3}px) rotate(${dx * 1.1}deg)`;
+      }
+    }
   }
 
   function setState(name, opts = {}) {
@@ -421,12 +470,16 @@
   function defaultAnim(type) {
     switch (type) {
       case 'welcome': case 'start': return 'wave';
-      case 'win': case 'checkpoint': case 'milestone': case 'combo': return 'cheer';
-      case 'fail': case 'crash': case 'wipeout': return 'sad';
+      case 'win': case 'milestone': return 'dance';
+      case 'combo': case 'checkpoint': case 'questdone': return 'cheer';
+      case 'crash': case 'wipeout': return 'dizzy';
+      case 'fail': return 'sad';
       case 'danger': case 'low': case 'boss': return 'alert';
+      case 'nearmiss': case 'close': return 'gasp';
+      case 'gate': case 'item': return 'bounce';
       case 'hint': case 'explain': return 'point';
       case 'pause': return 'sleep';
-      case 'resume': return 'wave';
+      case 'resume': return 'bounce';
       default: return 'idle';
     }
   }
@@ -494,6 +547,46 @@
     if (rmPreferred()) S.root.classList.add('rm');
     window.addEventListener('pointerdown', () => { if (rmPreferred()) S.root.classList.add('rm'); }, { once: true });
 
+    /* ---- playful physics: elastic drag + poke cycle + idle spice ---- */
+    let dragPid = null, dragX = 0, dragY = 0;
+    stage.addEventListener('pointerdown', e => {
+      dragPid = e.pointerId;
+      stage.setPointerCapture(dragPid);
+      dragX = e.clientX; dragY = e.clientY;
+      S.dragging = true;
+    });
+    stage.addEventListener('pointermove', e => {
+      if (e.pointerId !== dragPid || !S.dragging) return;
+      const dx = clampN((e.clientX - dragX) * 0.28, -26, 26);
+      const dy = clampN((e.clientY - dragY) * 0.28, -18, 12);
+      stage.style.transition = 'transform .08s ease-out';
+      stage.style.transform = `translate(${dx}px, ${dy}px) rotate(${dx * 0.12}deg)`;
+      if (S.state === 'idle' || S.state === 'wave') setState('alert', { once: true });
+    });
+    const releaseDrag = () => {
+      if (dragPid === null) return;
+      dragPid = null; S.dragging = false;
+      stage.style.transition = 'transform .55s cubic-bezier(.34,1.8,.4,1)';
+      stage.style.transform = 'translate(0,0) rotate(0deg)';
+      if (S.state === 'idle') play('bounce');
+    };
+    stage.addEventListener('pointerup', releaseDrag);
+    stage.addEventListener('pointercancel', releaseDrag);
+
+    const pokes = ['wave', 'bounce', 'gasp'];
+    let pokeIdx = 0;
+    stage.addEventListener('click', () => {
+      if (S.state === 'idle') { play(pokes[pokeIdx++ % pokes.length]); react('poke', {}); }
+    });
+
+    /* idle spice: she never sits perfectly still */
+    setInterval(() => {
+      if (S.state !== 'idle' || document.hidden || S.hidden) return;
+      const roll = Math.random();
+      if (roll < 0.22) play('bounce');
+      else if (roll < 0.30) play('gasp');
+    }, 9000);
+
     S.root.classList.add('st-idle');
     S.ready = true;
 
@@ -515,7 +608,6 @@
         }, { passive: true });
       }
     }
-    stage.addEventListener('click', () => react('poke', {}));
     if (S.cfg.lines && S.cfg.lines.poke) S.cfg.cooldowns = Object.assign({ poke: 3000 }, S.cfg.cooldowns);
   }
 
@@ -534,7 +626,7 @@
     mount, configure: o => { Object.assign(S.cfg, o); },
     play: (n, o) => setState(n, o),
     say, react, show, hide, setTalk,
-    gallery: () => openGallery(['idle', 'wave', 'cheer', 'think', 'alert', 'sad', 'sleep', 'point']),
+    gallery: () => openGallery(['idle', 'wave', 'dance', 'cheer', 'gasp', 'alert', 'dizzy', 'bounce', 'think', 'sad', 'sleep', 'point']),
     get state() { return S.state; }
   };
 })();
