@@ -1,0 +1,43 @@
+/* Saucer Siege theme — deep-space defense: mint grid accents, rose hostiles */
+:root {
+  --acc: #7DF9C6;
+  --acc2: #FF7A9E;
+  --ink: #EDF6FF;
+  --dim: #8FA5C4;
+  --bg: #07101E;
+  --panel: rgba(10, 20, 36, .86);
+  --font: 'Trebuchet MS', 'Segoe UI', system-ui, sans-serif;
+}
+
+/* the menu title gets a two-tone deep-space look */
+h1.title { color: #fff; }
+h1.title em {
+  background: linear-gradient(120deg, #7DF9C6, #9FD8FF 55%, #FF7A9E);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* HUD lives readout: little mint darts */
+#hud .lives-chip b { color: var(--acc); letter-spacing: .18em; font-size: 13px; }
+#hud .score-chip b { color: var(--acc); }
+#hud .combo-chip b { color: var(--acc2); }
+#hud .combo-meter { height: 5px; margin-top: 5px; }
+#hud .combo-meter i { background: linear-gradient(90deg, var(--acc), var(--acc2)); }
+
+/* boss health bar */
+#hud .hud-mid { display: flex; justify-content: center; margin-top: 10px; }
+#hud .boss-meter { width: min(300px, 56vw); }
+#hud .boss-meter i { background: linear-gradient(90deg, #FF7A9E, #FFD166); }
+
+/* logo pulse on the top bar */
+.topbar .brand { color: var(--acc); }
+
+/* menu floats over the live attract-mode scene */
+[data-screen="menu"], [data-screen="pause"], [data-screen="results"] {
+  background: linear-gradient(180deg, rgba(7,16,30,.86), rgba(12,26,40,.74));
+  backdrop-filter: blur(3px);
+}
+
+/* keep the wave chip clear of the boss bar */
+#hud .hud-top { row-gap: 6px; }
