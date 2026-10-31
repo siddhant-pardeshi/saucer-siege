@@ -444,7 +444,20 @@
             debriefOpen = false;
             G.resume();
             waveGapT = 1.2;   // a breath before the next wave
-          } }).then(ok => { if (ok) { score += 100 * wave; Kit.toast(`+${100 * wave} — correct call`); } });
+          } }).then(ok => {
+            if (ok) {
+              score += 100 * wave;
+              if (lives < 4) { lives++; Kit.toast('+1 hull — clean call'); }
+              else Kit.toast(`+${100 * wave} — correct call`);
+              Audio.sfx('powerup');
+            } else {
+              lives--;
+              Audio.sfx('hit');
+              G.shake(8);
+              Kit.toast('Wrong call — the grid takes a hull hit');
+              if (lives <= 0) { endRun(false); return; }
+            }
+          });
         }
       }
     }

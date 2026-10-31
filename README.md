@@ -14,7 +14,7 @@ The game is the **combo meter**: kills within 2.5 seconds chain x2 up to x8, and
 
 ## Debriefs: learn the bug classes
 
-Every saucer on the field wears a **real bug class** — RaceCondition, SQLi, NullPointer, CSRF — and between waves your mission controller walks you through a **debrief**: one concept card about the class you just fought (what a race condition actually is, why parameterized queries beat escaping, what the padlock does and does not promise). Correct calls pay a wave bonus, every answer gets a one-line explanation, and mastery is tracked in the menu's **Concepts** codex.
+Every saucer on the field wears a **real bug class** — RaceCondition, SQLi, NullPointer, CSRF — and between waves your mission controller walks you through a **debrief**: one concept card about the class you just fought (what a race condition actually is, why parameterized queries beat escaping, what the padlock does and does not promise). Correct calls pay a wave bonus **and patch your hull (+1, up to four)**; a wrong call costs a hull heart — run out and the grid falls. Every answer gets a one-line explanation, and mastery is tracked in the menu's **Concepts** codex.
 
 ## Controls
 
