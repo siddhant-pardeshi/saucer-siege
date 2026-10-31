@@ -46,6 +46,7 @@
       <button class="btn ghost" id="btn-settings">Settings</button>
     </div>
     <p class="beststat" id="menu-best"></p>
+    <p class="byline">Crafted by <b>Siddhant Pardeshi</b> · <a href="https://siddhant-pardeshi.github.io/game-deck/" target="_blank" rel="noopener">The Game Deck</a></p>
   </section>`);
 
   const howto = mk(`<section class="screen scroll" data-screen="howto">
@@ -251,6 +252,26 @@
   refreshMenuStats();
 
   /* results */
+  function confettiBurst() {
+    if (Kit.reducedMotion()) return;
+    const host = document.createElement('div');
+    host.className = 'confetti';
+    const colors = ['#FFD166', '#7EE8FF', '#FF6EC7', '#8AFFC1', '#B08CFF'];
+    for (let i = 0; i < 26; i++) {
+      const bit = document.createElement('i');
+      bit.style.left = Math.random() * 100 + 'vw';
+      bit.style.background = colors[i % colors.length];
+      bit.style.animationDelay = (Math.random() * 0.5) + 's';
+      bit.style.animationDuration = (1.6 + Math.random() * 1.4) + 's';
+      bit.style.setProperty('--rx', (Math.random() * 720 - 360) + 'deg');
+      bit.style.width = (6 + Math.random() * 6) + 'px';
+      bit.style.height = (10 + Math.random() * 8) + 'px';
+      host.appendChild(bit);
+    }
+    document.body.appendChild(host);
+    setTimeout(() => host.remove(), 3400);
+  }
+
   Kit.showResults = ({ medal = '🏆', kicker = 'Run complete', title = 'Nice flying', stats = [], best, mascotLine } = {}) => {
     $('#r-medal').textContent = medal;
     $('#r-kicker').textContent = kicker;
@@ -264,7 +285,7 @@
     if (best) {
       const prev = Kit.store.get(G.best.key, best.lowerBetter ? Infinity : 0);
       const isPB = best.lowerBetter ? best.value < prev : best.value > prev;
-      if (isPB) Kit.store.set(G.best.key, best.value);
+      if (isPB) { Kit.store.set(G.best.key, best.value); confettiBurst(); }
       const disp = G.best && G.best.display ? G.best.display(prev) : Kit.fmt(prev);
       $('#r-best').innerHTML = isPB ? `<b>New personal best!</b>` : `Personal best <b>${disp}</b>`;
     } else $('#r-best').textContent = '';

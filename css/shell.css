@@ -391,3 +391,48 @@ body.rm .btn, body.rm .iconbtn { transition: none; }
 .cx-stars { color: var(--acc2); font-size: 11px; letter-spacing: .12em; flex: 0 0 auto; }
 .cx-why { margin: 8px 0 2px; font-size: 13px; color: var(--dim); line-height: 1.55; border-top: 1px dashed rgba(255,255,255,.12); padding-top: 8px; }
 .codex-note { text-align: center; color: #6E7FA3; font-size: 12px; margin: 16px 0 0; }
+
+/* ---------------- animator polish ---------------- */
+/* menu title: slow float + living glow */
+.screen.active h1.title { animation: titleFloat 7s ease-in-out infinite; }
+@keyframes titleFloat {
+  0%, 100% { transform: translateY(0); text-shadow: 0 6px 30px color-mix(in srgb, var(--acc) 30%, transparent); }
+  50% { transform: translateY(-5px); text-shadow: 0 14px 44px color-mix(in srgb, var(--acc) 55%, transparent); }
+}
+/* primary button breathes — the eye lands on Play */
+.btn.primary { animation: playPulse 2.6s ease-in-out infinite; }
+@keyframes playPulse {
+  0%, 100% { box-shadow: 0 10px 30px color-mix(in srgb, var(--acc) 35%, transparent); }
+  50% { box-shadow: 0 14px 44px color-mix(in srgb, var(--acc) 60%, transparent); }
+}
+/* learn card verdict flashes */
+.learn-card.right-flash { animation: rightGlow .9s ease-out; }
+@keyframes rightGlow { 0% { box-shadow: 0 0 0 0 rgba(107,226,154,.7); } 100% { box-shadow: 0 0 0 26px rgba(107,226,154,0); } }
+.learn-card.wrong-flash { animation: wrongGlow .9s ease-out; }
+@keyframes wrongGlow { 0% { box-shadow: 0 0 0 0 rgba(228,115,124,.7); } 100% { box-shadow: 0 0 0 26px rgba(228,115,124,0); } }
+/* card collapses to a lingering concept bar (spaced reinforcement) */
+.learn-card.bar { width: auto; max-width: min(480px, calc(100vw - 24px)); padding: 9px 16px; border-radius: 999px; }
+.learn-card.bar .learn-bar { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.learn-bar .learn-term { font-size: 14px; color: var(--ink); }
+.learn-bar .learn-note { font-size: 11px; color: var(--dim); }
+@media (max-width: 620px) { .learn-card.bar { bottom: calc(var(--sab) + 158px); } }
+body.rm .screen.active h1.title, body.rm .btn.primary { animation: none; }
+@media (prefers-reduced-motion: reduce) { .screen.active h1.title, .btn.primary { animation: none; } }
+
+/* byline */
+.byline { margin: 4px 0 0; font-size: 12.5px; color: var(--dim); letter-spacing: .04em; }
+.byline b { color: var(--ink); }
+.byline a { color: var(--acc); }
+
+/* PB confetti */
+.confetti { position: fixed; inset: 0; z-index: 85; pointer-events: none; overflow: hidden; }
+.confetti i {
+  position: absolute; top: -20px; display: block; border-radius: 2px;
+  opacity: .95;
+  animation: confettiFall linear forwards;
+  transform: rotate(0deg);
+}
+@keyframes confettiFall {
+  0% { transform: translateY(-4vh) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(108vh) rotate(var(--rx, 360deg)); opacity: .6; }
+}

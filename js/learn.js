@@ -150,6 +150,8 @@
       if (timerId) clearInterval(timerId);
       const ok = i === card.a;
       record(card.id, ok);
+      el.classList.add(ok ? 'right-flash' : 'wrong-flash');
+      setTimeout(() => el.classList.remove('right-flash', 'wrong-flash'), 900);
       el.querySelectorAll('.learn-choice').forEach((b, bi) => {
         b.disabled = true;
         if (bi === card.a) b.classList.add('right');
@@ -169,10 +171,25 @@
       if (openCard !== card) return;
       openCard = null;
       if (timerId) clearInterval(timerId);
-      el.classList.remove('on');
-      setTimeout(() => { el.innerHTML = ''; }, 250);
       opts.onClose && opts.onClose(ok);
       resolvePromise(ok === null ? false : ok);
+      collapseToBar(ok);
+    }
+
+    /* the card folds into a slim bar that lingers — spaced exposure to the term */
+    function collapseToBar(ok) {
+      const term = card.choices[card.a];
+      el.classList.add('bar');
+      el.innerHTML = `
+        <div class="learn-bar">
+          <span class="learn-tag">${card.tag || card.track || 'Concept'}</span>
+          <b class="learn-term">${term}</b>
+          <span class="learn-note">${ok ? 'mastered a little more' : 'watch for this one again'}</span>
+        </div>`;
+      setTimeout(() => {
+        el.classList.remove('on', 'bar');
+        setTimeout(() => { el.innerHTML = ''; }, 300);
+      }, 12000);
     }
 
     let resolvePromise;
