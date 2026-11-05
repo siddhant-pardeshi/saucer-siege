@@ -39,6 +39,10 @@ The character in the corner is Pip — warm voice on the comms. They brief you, 
 
 Volume sliders and mute (`M`), quality tiers, reduced motion, camera-shake toggle, hideable mascot, fullscreen, keyboard-playable menus, touch targets ≥ 44px. Fully playable muted — every effect has a visual counterpart.
 
+## Privacy
+
+No accounts, no cookies, no analytics, no tracking — nothing leaves your device. Progress and settings live in your browser's localStorage and can be wiped anytime from Settings. Full details: [SECURITY.md](SECURITY.md) and the deck-wide [privacy statement](https://github.com/siddhant-pardeshi/game-deck/blob/main/PRIVACY.md).
+
 ## Under the hood
 
 One shared game kit, zero downloaded assets: three-layer parallax starfield, nebula blobs and a planet horizon drawn with canvas paths; saucers, pods and the mothership are vector geometry; the soundtrack — 92 BPM space pads, a 128 BPM battle groove with an intensity lead that climbs per wave — is synthesized live with WebAudio. Personal best lives in localStorage.

@@ -249,6 +249,7 @@
       ctx.translate(so.x, so.y);
       render(ctx, G);
       ctx.restore();
+      G.__booted = true;
       onPulse && onPulse(dt);
     }
 
@@ -256,6 +257,7 @@
       if (G.running) return;
       G.running = true; G.paused = false;
       G.last = performance.now(); G.acc = 0;
+      window.__deckBooted = true;   // the loop is live; the loading guard stands down
       requestAnimationFrame(tick);
     };
     G.pause = () => { G.paused = true; };

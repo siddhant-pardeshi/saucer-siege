@@ -342,5 +342,24 @@
     if (document.hidden && Kit.screens.active() === 'hud') togglePause();
   });
 
+  /* never leave a player on a stuck loading screen: if the game loop
+     never started (script failure), say so and offer a reload.
+     Only judges while the tab is visible — background tabs never tick. */
+  const bootGuard = () => {
+    if (window.__deckBooted) return;
+    if (document.visibilityState !== 'visible') { setTimeout(bootGuard, 2500); return; }
+    const v = document.getElementById('veil');
+    if (!v) return;
+    v.classList.remove('off');
+    v.innerHTML = `
+      <div class="v-inner">
+        <div class="v-title" style="color:#E4737C">Something jammed on the launchpad</div>
+        <p style="color:var(--dim,#9FB2D4);font:600 13px var(--font);margin:0;max-width:34ch;text-align:center">The game failed to start — a refresh usually clears it.</p>
+        <button class="btn primary" id="veil-reload">Reload</button>
+      </div>`;
+    document.getElementById('veil-reload').addEventListener('click', () => location.reload());
+  };
+  setTimeout(bootGuard, 7000);
+
   document.addEventListener('contextmenu', e => { if (e.target.tagName === 'CANVAS') e.preventDefault(); });
 })();
